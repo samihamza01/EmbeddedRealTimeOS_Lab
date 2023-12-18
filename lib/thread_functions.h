@@ -14,7 +14,6 @@
 #define THREAD_FUNCTIONS_H_
 
 #include <sim_main.h>
-//#include <thread_functions.c>
 
 void *person_thread(void* arg);
 void *room_monitor_thread(void* arg);
