@@ -15,8 +15,11 @@
 
 #include <sim_main.h>
 
-void *person_thread(void* arg);
-void *room_monitor_thread(void* arg);
+void* person_thread(void* arg);
+void* room_monitor_thread(void* arg);
+void* clock_generator_thread(void* arg);
+void* clock_consumer_thread(void* arg);
+void* waste_cpu_time_1_thread(void* arg);
 
 
 #endif /* THREAD_FUNCTIONS_H_ */

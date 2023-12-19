@@ -67,7 +67,7 @@ void *room_monitor_thread(void* arg){
 }
 
 void* clock_generator_thread(void* arg) {
-	sem_t* clock_sem = (clock_sem*)arg;
+	sem_t* clock_sem = (sem_t*)arg;
 	// create the timespec struct
 	struct timespec abs_time;
 	// get the current time
@@ -83,10 +83,10 @@ void* clock_generator_thread(void* arg) {
 }
 
 void* clock_consumer_thread(void* arg) {
-	sem_t* waste_cpu_time_sems = (clock_sem*)arg;
+	sem_t* waste_cpu_time_sems = (sem_t*)arg;
 	int counter = 0;
 	while(1) {
-		sem_wait(&clock_sem);
+		sem_wait(waste_cpu_time_sems);
 		waste_time(1);
 		counter++;
 		if (counter == N) {
@@ -99,9 +99,9 @@ void* clock_consumer_thread(void* arg) {
 }
 
 void* waste_cpu_time_1_thread(void* arg) {
-	sem_t* waste_cpu_time_sem = (clock_sem*)arg;
+	sem_t* waste_cpu_time_sem = (sem_t*)arg;
 	while(1) {
-		sem_wait(&waste_cpu_time_sem);
+		sem_wait(waste_cpu_time_sem);
 		waste_time(4);
 	}
 }
