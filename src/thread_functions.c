@@ -15,9 +15,6 @@
 #include <time.h>
 #include <semaphore.h>
 
-// Defines ////////////////////////////////////////////
-#define N 3
-
 // Function Definitions ///////////////////////////////
 void *person_thread(void* arg){
 	Person *person = (Person *)arg;
@@ -66,42 +63,48 @@ void *room_monitor_thread(void* arg){
 	return NULL;
 }
 
+// Task 4 /////////////////////////////////////////////////////////////////////////
+// Defines ////////////////////////////////////////////
+#define N 14
+// Function Definitions ///////////////////////////////
 void* clock_generator_thread(void* arg) {
 	sem_t* clock_sem = (sem_t*)arg;
 	// create the timespec struct
 	struct timespec abs_time;
-	// get the current time
-	clock_gettime(CLOCK_REALTIME,&abs_time);
-	// add the time step 2 ms
-	abs_time.tv_sec += 0.002;
-	abs_time.tv_nsec += 2000000;
 
 	while(1) {
+		// get the current time
+		CHECK_SUCCESS(clock_gettime(CLOCK_REALTIME,&abs_time));
+		// add the time step 2 ms
+		abs_time.tv_sec += 0.002;
+		abs_time.tv_nsec += 2000000;
 		CHECK_SUCCESS(clock_nanosleep(CLOCK_REALTIME,TIMER_ABSTIME,&abs_time,NULL));
-		sem_post(clock_sem);
+		CHECK_SUCCESS(sem_post(clock_sem));
 	}
 }
 
 void* clock_consumer_thread(void* arg) {
-	sem_t* waste_cpu_time_sems = (sem_t*)arg;
+	clock_consumer_args_t* clock_consumer_args = (clock_consumer_args_t*) arg;
+	sem_t* clock_sem = clock_consumer_args->clock_sem;
+	sem_t* waste_cpu_time_sems = clock_consumer_args->waste_cpu_time_sems;
 	int counter = 0;
 	while(1) {
-		sem_wait(waste_cpu_time_sems);
+		CHECK_SUCCESS(sem_wait(clock_sem));
 		waste_time(1);
 		counter++;
 		if (counter == N) {
 			counter = 0;
 			// increment semaphores for waste time threads
-			sem_post(&waste_cpu_time_sems[0]);
-			sem_post(&waste_cpu_time_sems[1]);
+			CHECK_SUCCESS(sem_post(&waste_cpu_time_sems[0]));
+			CHECK_SUCCESS(sem_post(&waste_cpu_time_sems[1]));
 		}
 	}
 }
 
-void* waste_cpu_time_1_thread(void* arg) {
+void* waste_cpu_time_thread(void* arg) {
 	sem_t* waste_cpu_time_sem = (sem_t*)arg;
 	while(1) {
-		sem_wait(waste_cpu_time_sem);
+		CHECK_SUCCESS(sem_wait(waste_cpu_time_sem));
 		waste_time(4);
 	}
 }

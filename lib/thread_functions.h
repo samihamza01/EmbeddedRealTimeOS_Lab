@@ -14,12 +14,21 @@
 #define THREAD_FUNCTIONS_H_
 
 #include <sim_main.h>
+#include <semaphore.h>
 
+// Task 2 //////////////////////////////////////////////
 void* person_thread(void* arg);
 void* room_monitor_thread(void* arg);
+
+// Task 1 //////////////////////////////////////////////
 void* clock_generator_thread(void* arg);
 void* clock_consumer_thread(void* arg);
-void* waste_cpu_time_1_thread(void* arg);
+void* waste_cpu_time_thread(void* arg);
+
+typedef struct {
+	sem_t* clock_sem;
+	sem_t* waste_cpu_time_sems;
+}clock_consumer_args_t;
 
 
 #endif /* THREAD_FUNCTIONS_H_ */
