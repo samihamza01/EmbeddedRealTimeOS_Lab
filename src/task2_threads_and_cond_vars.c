@@ -1,20 +1,20 @@
 /*
-* Praktikum Embedded- und Echtzeitbetriebssysteme 23/24
-* Gruppe: xy
-*
-* This is the main thread for testing everything
-*
-* Created on: Nov 25, 2023
-* Author: 	Valentin Lairich
-* Author:	Sami Hamza
-* Version:	1.0
-* Updated:	Nov 25, 2023
-*/
+ * task2_threads_and_cond_vars.c
+ *
+ * Task 2: Sourcefile for functionalities from task 2.
+ *
+ * Created on: Nov 26, 2023
+ * Author: 	Valentin Lairich
+ * Author:	Sami Hamza
+ * Version:	1.0
+ * Updated:	Nov 26, 2023
+ */
+
 #include <sim_main.h>
 #include <thread_functions.h>
-#include <task4_cooperating_tasks.h>
+#include <task2_threads_and_cond_vars.h>
 
-int main(void) {
+int task2_main(void) {
 	Room kitchen;
 
 	puts("Starting simulation !!!"); /* prints Hello World!!! */
