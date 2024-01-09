@@ -10,6 +10,6 @@
  * Updated:	Nov 26, 2023
  */
 
-// @brief Function to perform specified tasks of task 4.
+// @brief Function wrapper to perform specified tasks of task 4. SHould be called in main to perform the desired tasks.
 // @returns Status exit code.
 int task4_main();
