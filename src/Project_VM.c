@@ -12,42 +12,13 @@
 */
 #include <sim_main.h>
 #include <thread_functions.h>
-#include <task4_cooperating_tasks.h>
+#include <task6_stack_tracing.h>
 
 int main(void) {
-	Room kitchen;
+	sleep(1);
+	printf("Starting simulation!!!\n");
 
-	puts("Starting simulation !!!"); /* prints Hello World!!! */
-
-	// Initialize the room
-	//CHECK_SUCCESS(init_room(&kitchen, 0));
-	init_room(&kitchen, 0);
-
-
-	// Initialize four persons in the kitchen
-	Person persons[4];
-	pthread_t tid[4];
-
-	for(int i = 0; i < 4; i++) {
-		//CHECK_SUCCESS(init_person(&persons[i], i, &kitchen, 0));
-		init_person(&persons[i], i, &kitchen, 0);
-
-		// Create a thread for each person
-		//CHECK_SUCCESS(pthread_create(&tid[i], NULL, person_thread, &persons[i]));
-		pthread_create(&tid[i], NULL, person_thread, &persons[i]);
-	}
-
-	// create a monitor thread
-	pthread_t kitchen_monitor;
-	//CHECK_SUCCESS(pthread_create(&kitchen_monitor, NULL, room_monitor_thread, &kitchen));
-	pthread_create(&kitchen_monitor, NULL, room_monitor_thread, &kitchen);
-	//CHECK_SUCCESS(pthread_join(kitchen_monitor, NULL));
-	pthread_join(kitchen_monitor, NULL);
-
-	for(int i = 0; i < 4; i++) {
-		//CHECK_SUCCESS(pthread_join(tid[i], NULL));
-		pthread_join(tid[i], NULL);
-	}
+	task6_main();
 
 	return EXIT_SUCCESS;
 }

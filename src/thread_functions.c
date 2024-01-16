@@ -71,13 +71,13 @@ void* clock_generator_thread(void* arg) {
 	sem_t* clock_sem = (sem_t*)arg;
 	// create the timespec struct
 	struct timespec abs_time;
-
+	// get the current time
+	CHECK_SUCCESS(clock_gettime(CLOCK_REALTIME,&abs_time));
 	while(1) {
-		// get the current time
-		CHECK_SUCCESS(clock_gettime(CLOCK_REALTIME,&abs_time));
 		// add the time step 2 ms
-		abs_time.tv_sec += 0.002;
-		abs_time.tv_nsec += 2000000;
+		nsec2timespec(&abs_time,timespec2nsec(&abs_time) + 2000000);
+		//abs_time.tv_sec += 0.002;
+		//abs_time.tv_nsec += 2000000;
 		CHECK_SUCCESS(clock_nanosleep(CLOCK_REALTIME,TIMER_ABSTIME,&abs_time,NULL));
 		CHECK_SUCCESS(sem_post(clock_sem));
 	}

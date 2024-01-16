@@ -15,7 +15,7 @@
  * @param memory_ptr: Pointer to the memory.
  * @param size: Size of memory in bytes.
  */
-void init_stack(void* memory_ptr, int size);
+void init_stack(void* memory_ptr, size_t size);
 
 
 /*
@@ -23,4 +23,11 @@ void init_stack(void* memory_ptr, int size);
  * @param memory_ptr: Pointer to the memory.
  * @param size: Size of memory in bytes.
  */
-int get_stack_watermark(void* memory_ptr, int size);
+size_t get_stack_watermark(void* memory_ptr, size_t size);
+
+
+/*
+ * @brief Function wrapper to perform specified tasks of task 6. Should be called in main to perform the desired tasks.
+ * @returns Status exit code.
+ */
+int task6_main();
