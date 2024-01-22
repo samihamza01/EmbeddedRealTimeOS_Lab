@@ -98,7 +98,7 @@ int task6_main() {
 	struct sched_param main_thread_param;
 	CHECK_SUCCESS(pthread_getschedparam(pthread_self(),NULL,&main_thread_param));
 	int main_prio = main_thread_param.sched_curpriority;
-	printf("Main thread priority: %d\n",main_prio);
+	// printf("Main thread priority: %d\n",main_prio);
 	// set priorities accordingly
 	clock_generator_param.sched_priority = main_prio+2;
 	clock_consumer_param.sched_priority = main_prio+1;
@@ -119,13 +119,13 @@ int task6_main() {
 
 	// set thread stack
 	CHECK_SUCCESS(pthread_attr_setstackaddr(&clock_generator_attr,ptr_stack_clock_generator));
-	CHECK_SUCCESS(pthread_attr_setstackaddr(&clock_generator_attr,ptr_stack_clock_consumer));
-	CHECK_SUCCESS(pthread_attr_setstackaddr(&clock_generator_attr,ptr_stack_cpu_wast_time_1));
-	CHECK_SUCCESS(pthread_attr_setstackaddr(&clock_generator_attr,ptr_stack_cpu_wast_time_2));
+	CHECK_SUCCESS(pthread_attr_setstackaddr(&clock_consumer_attr,ptr_stack_clock_consumer));
+	CHECK_SUCCESS(pthread_attr_setstackaddr(&cpu_wast_time_attr[0],ptr_stack_cpu_wast_time_1));
+	CHECK_SUCCESS(pthread_attr_setstackaddr(&cpu_wast_time_attr[1],ptr_stack_cpu_wast_time_2));
 	CHECK_SUCCESS(pthread_attr_setstacksize(&clock_generator_attr,init_stack_size));
-	CHECK_SUCCESS(pthread_attr_setstacksize(&clock_generator_attr,init_stack_size));
-	CHECK_SUCCESS(pthread_attr_setstacksize(&clock_generator_attr,init_stack_size));
-	CHECK_SUCCESS(pthread_attr_setstacksize(&clock_generator_attr,init_stack_size));
+	CHECK_SUCCESS(pthread_attr_setstacksize(&clock_consumer_attr,init_stack_size));
+	CHECK_SUCCESS(pthread_attr_setstacksize(&cpu_wast_time_attr[0],init_stack_size));
+	CHECK_SUCCESS(pthread_attr_setstacksize(&cpu_wast_time_attr[1],init_stack_size));
 
 	// PTHREAD_EXPLICIT_SCHED to explicitly set priorities
 	CHECK_SUCCESS(pthread_attr_setinheritsched(&clock_generator_attr,PTHREAD_EXPLICIT_SCHED));
