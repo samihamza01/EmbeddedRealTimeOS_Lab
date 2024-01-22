@@ -10,8 +10,11 @@
 * Version:	1.0
 * Updated:	Nov 25, 2023
 */
-#include <sim_main.h>
-#include <thread_functions.h>
+
+#include <main.h>
+#include <task2_threads_and_cond_vars.h>
+#include <task3_waste_time.h>
+#include <task4_cooperating_tasks.h>
 #include <task6_stack_tracing.h>
 
 int main(void) {

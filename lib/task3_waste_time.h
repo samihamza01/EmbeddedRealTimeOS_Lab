@@ -11,8 +11,8 @@
  */
 
 
-#ifndef LIB_TASK3_WASTE_TIME_H_
-#define LIB_TASK3_WASTE_TIME_H_
+#ifndef TASK3_WASTE_TIME_H_
+#define TASK3_WASTE_TIME_H_
 
 // FUNCTIONS /////////////////////////////////////////////////////////////////////
 
@@ -22,4 +22,4 @@ void waste_time(unsigned int msecs);
 /* Calibrate the waste_time function.*/
 void waste_time_calibrate(void);
 
-#endif /* LIB_TASK3_WASTE_TIME_H_ */
+#endif

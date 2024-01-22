@@ -12,7 +12,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
-#include <thread_functions.h>
+#include <task4_cooperating_tasks.h>
+#include <task6_stack_tracing.h>
+#include <main.h>
 
 
 #define SEQUENCE_LENGTH 2

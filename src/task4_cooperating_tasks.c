@@ -11,8 +11,55 @@
  */
 
 #include <task4_cooperating_tasks.h>
-#include <thread_functions.h>
 #include <task3_waste_time.h>
+#include <time.h>
+#include <main.h>
+
+// Defines ////////////////////////////////////////////
+#define N 14
+
+// Function Definitions ///////////////////////////////
+void* clock_generator_thread(void* arg) {
+	sem_t* clock_sem = (sem_t*)arg;
+	// create the timespec struct
+	struct timespec abs_time;
+	// get the current time
+	CHECK_SUCCESS(clock_gettime(CLOCK_REALTIME,&abs_time));
+	while(1) {
+		// add the time step 2 ms
+		nsec2timespec(&abs_time,timespec2nsec(&abs_time) + 2000000);
+		//abs_time.tv_sec += 0.002;
+		//abs_time.tv_nsec += 2000000;
+		CHECK_SUCCESS(clock_nanosleep(CLOCK_REALTIME,TIMER_ABSTIME,&abs_time,NULL));
+		CHECK_SUCCESS(sem_post(clock_sem));
+	}
+}
+
+void* clock_consumer_thread(void* arg) {
+	clock_consumer_args_t* clock_consumer_args = (clock_consumer_args_t*) arg;
+	sem_t* clock_sem = clock_consumer_args->clock_sem;
+	sem_t* waste_cpu_time_sems = clock_consumer_args->waste_cpu_time_sems;
+	int counter = 0;
+	while(1) {
+		CHECK_SUCCESS(sem_wait(clock_sem));
+		waste_time(1);
+		counter++;
+		if (counter == N) {
+			counter = 0;
+			// increment semaphores for waste time threads
+			CHECK_SUCCESS(sem_post(&waste_cpu_time_sems[0]));
+			CHECK_SUCCESS(sem_post(&waste_cpu_time_sems[1]));
+		}
+	}
+}
+
+void* waste_cpu_time_thread(void* arg) {
+	sem_t* waste_cpu_time_sem = (sem_t*)arg;
+	while(1) {
+		CHECK_SUCCESS(sem_wait(waste_cpu_time_sem));
+		waste_time(4);
+	}
+}
 
 int task4_main() {
 	// calibrate waste time function
@@ -86,5 +133,3 @@ int task4_main() {
 
 	return EXIT_SUCCESS;
 }
-
-

@@ -10,6 +10,9 @@
  * Updated:	Nov 26, 2023
  */
 
+#ifndef TASK6_STACK_TRACING
+#define TASK6_STACK_TRACING
+
 /*
  * @brief Function to initialize allocated memory with an 'HM' sequence.
  * @param memory_ptr: Pointer to the memory.
@@ -31,3 +34,5 @@ size_t get_stack_watermark(void* memory_ptr, size_t size);
  * @returns Status exit code.
  */
 int task6_main();
+
+#endif

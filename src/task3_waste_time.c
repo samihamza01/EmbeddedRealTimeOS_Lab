@@ -15,8 +15,8 @@
 #include <sys/syspage.h>
 #include <sys/procmgr.h>
 #include <time.h>
-#include <sim_main.h>
 #include <task3_waste_time.h>
+#include <main.h>
 
 //
 int calibrated = 0;
