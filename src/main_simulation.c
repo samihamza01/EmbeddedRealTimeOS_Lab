@@ -21,7 +21,9 @@ int main(void) {
 	sleep(1);
 	printf("Starting simulation!!!\n");
 
-	task6_main();
+	//task2_main(); // Uncomment in for task 2
+	//task4_main(); // Uncomment in for task 4
+	task6_main(); // Uncomment for task 6
 
 	return EXIT_SUCCESS;
 }

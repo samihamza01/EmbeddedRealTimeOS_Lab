@@ -16,7 +16,7 @@
 #include <main.h>
 
 // Defines ////////////////////////////////////////////
-#define N 14
+#define N 10
 
 // Function Definitions ///////////////////////////////
 void* clock_generator_thread(void* arg) {

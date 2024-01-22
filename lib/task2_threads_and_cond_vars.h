@@ -42,6 +42,7 @@ typedef struct {
 /* thread functions */
 void* person_thread(void* arg);
 void* room_monitor_thread(void* arg);
+
 /* room functions */
 int init_room(Room *room, int id);
 int destroy_room(Room *room);
