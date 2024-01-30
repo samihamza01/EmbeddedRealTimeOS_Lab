@@ -22,4 +22,8 @@ void waste_time(unsigned int msecs);
 /* Calibrate the waste_time function.*/
 void waste_time_calibrate(void);
 
+// @brief Function wrapper to perform specified tasks of task 3. Calls the waste_time function with several delays. These can then be analysed with the kernel trace. Should be called in main to perform the desired tasks.
+// @returns Status exit code.
+int task3_main(void);
+
 #endif

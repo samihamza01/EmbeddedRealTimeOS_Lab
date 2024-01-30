@@ -18,11 +18,12 @@
 #include <task6_stack_tracing.h>
 
 int main(void) {
-	sleep(1);
-	printf("Starting simulation!!!\n");
+	sleep(2);
+	printf("Starting main!\n");
 
-	//task2_main(); // Uncomment in for task 2
-	//task4_main(); // Uncomment in for task 4
+	//task2_main(); // Uncomment for task 2
+	//task3_main(); // Uncomment for task 3
+	//task4_main(); // Uncomment for task 4
 	task6_main(); // Uncomment for task 6
 
 	return EXIT_SUCCESS;

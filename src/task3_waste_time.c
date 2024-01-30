@@ -44,3 +44,20 @@ void waste_time_calibrate(void) {
 	}
 	return;
 }
+
+int task3_main() {
+	// calibration of the waste time
+	waste_time_calibrate();
+
+	// array of demanded times to waste in ms
+	int waste_times[7] = {1, 2, 5, 10, 20};
+
+	for (int i = 0; i < 5; i++)  {
+		printf("waste %d ms\n", waste_times[i]);
+		delay(10);
+		waste_time(waste_times[i]);
+		delay(10);
+	}
+
+	return EXIT_SUCCESS;
+}
