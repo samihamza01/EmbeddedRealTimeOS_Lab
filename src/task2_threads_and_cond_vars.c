@@ -16,8 +16,8 @@
 int init_room(Room *room, int id){
 
 	// Initialize mutex and condition variable
-	pthread_mutex_init(&room->lock, NULL);
-	pthread_cond_init(&room->room_notifier, NULL);
+	CHECK_SUCCESS(pthread_mutex_init(&room->lock, NULL));
+	CHECK_SUCCESS(pthread_cond_init(&room->room_notifier, NULL));
 
 	// Initialize other members
 	room->id = id;
@@ -29,8 +29,8 @@ int init_room(Room *room, int id){
 int destroy_room(Room *room){
 
     // Destroy mutex and condition variable
-    pthread_mutex_destroy(&room->lock);
-    pthread_cond_destroy(&room->room_notifier);
+    CHECK_SUCCESS(pthread_mutex_destroy(&room->lock));
+    CHECK_SUCCESS(pthread_cond_destroy(&room->room_notifier));
 
 	return 0;
 }
@@ -38,7 +38,7 @@ int destroy_room(Room *room){
 int init_person(Person *person, int id, Room *room, int is_in_room){
 
 	// Initialize mutex and condition variable
-	pthread_mutex_init(&person->lock, NULL);
+	CHECK_SUCCESS(pthread_mutex_init(&person->lock, NULL));
 
 	// Initialize other members
 	person->id = id;
@@ -52,7 +52,7 @@ int init_person(Person *person, int id, Room *room, int is_in_room){
 int destroy_person(Person *person){
 
     // Destroy mutex and condition variable
-    pthread_mutex_destroy(&person->lock);
+    CHECK_SUCCESS(pthread_mutex_destroy(&person->lock));
 
 	return 0;
 }
@@ -66,14 +66,14 @@ void *person_thread(void* arg){
 		int sleepTime = rand() % 30 + 1;
 		sleep(sleepTime);
 
-		pthread_mutex_lock(&person->lock);
+		CHECK_SUCCESS(pthread_mutex_lock(&person->lock));
 
 		// Person betritt oder verlässt den Raum
 		person->is_in_room = !person->is_in_room;
 
-		pthread_mutex_unlock(&person->lock);
+		CHECK_SUCCESS(pthread_mutex_unlock(&person->lock));
 
-		pthread_mutex_lock(&person->room->lock);
+		CHECK_SUCCESS(pthread_mutex_lock(&person->room->lock));
 
 		// Raum counter hoch oder runterzählen
 		if(person->is_in_room == 0)
@@ -81,8 +81,8 @@ void *person_thread(void* arg){
 		else
 			person->room->person_cnt++;
 
-		pthread_cond_signal(&person->room->room_notifier);
-		pthread_mutex_unlock(&person->room->lock);
+		CHECK_SUCCESS(pthread_cond_signal(&person->room->room_notifier));
+		CHECK_SUCCESS(pthread_mutex_unlock(&person->room->lock));
 
 	}
 
@@ -92,14 +92,14 @@ void *room_monitor_thread(void* arg){
 	Room *room = (Room *)arg;
 
 	while(1) {
-		pthread_mutex_lock(&room->lock);
-		pthread_cond_wait(&room->room_notifier,&room->lock);
+		CHECK_SUCCESS(pthread_mutex_lock(&room->lock));
+		CHECK_SUCCESS(pthread_cond_wait(&room->room_notifier,&room->lock));
 
 		//puts("%i people in the room: %i!!!", room->person_cnt, room->id);
 		printf("%d people in the room: %d!!!\n", room->person_cnt, room->id);
 
 
-		pthread_mutex_unlock(&room->lock);
+		CHECK_SUCCESS(pthread_mutex_unlock(&room->lock));
 	}
 
 	return NULL;
@@ -121,23 +121,23 @@ int task2_main(void) {
 
 	for(int i = 0; i < 4; i++) {
 		//CHECK_SUCCESS(init_person(&persons[i], i, &kitchen, 0));
-		init_person(&persons[i], i, &kitchen, 0);
+		CHECK_SUCCESS(init_person(&persons[i], i, &kitchen, 0));
 
 		// Create a thread for each person
 		//CHECK_SUCCESS(pthread_create(&tid[i], NULL, person_thread, &persons[i]));
-		pthread_create(&tid[i], NULL, person_thread, &persons[i]);
+		CHECK_SUCCESS(pthread_create(&tid[i], NULL, person_thread, &persons[i]));
 	}
 
 	// create a monitor thread
 	pthread_t kitchen_monitor;
 	//CHECK_SUCCESS(pthread_create(&kitchen_monitor, NULL, room_monitor_thread, &kitchen));
-	pthread_create(&kitchen_monitor, NULL, room_monitor_thread, &kitchen);
+	CHECK_SUCCESS(pthread_create(&kitchen_monitor, NULL, room_monitor_thread, &kitchen));
 	//CHECK_SUCCESS(pthread_join(kitchen_monitor, NULL));
-	pthread_join(kitchen_monitor, NULL);
+	CHECK_SUCCESS(pthread_join(kitchen_monitor, NULL));
 
 	for(int i = 0; i < 4; i++) {
 		//CHECK_SUCCESS(pthread_join(tid[i], NULL));
-		pthread_join(tid[i], NULL);
+		CHECK_SUCCESS(pthread_join(tid[i], NULL));
 	}
 
 	return EXIT_SUCCESS;
