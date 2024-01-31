@@ -18,7 +18,7 @@
 #include <task6_stack_tracing.h>
 
 int main(void) {
-	sleep(2);
+	sleep(1);
 	printf("Starting main!\n");
 
 	//task2_main(); // Uncomment for task 2

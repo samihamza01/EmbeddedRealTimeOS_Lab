@@ -86,34 +86,35 @@ int task6_main() {
 	// calibrate waste time function
 	waste_time_calibrate();
 
-	// create all threads: clock generator-, clock consumer- and two worker threads
+	// declare all threads: clock generator-, clock consumer- and two worker threads
 	pthread_t clock_generator;
 	pthread_t clock_consumer;
 	pthread_t cpu_wast_time[2];
+
+	// create threads and semaphores
+	sem_t clock_sem;
+	sem_t waste_cpu_time_sems[2];
+
+	// thread attributes structures
+	pthread_attr_t clock_generator_attr;
+	pthread_attr_t clock_consumer_attr;
+	pthread_attr_t cpu_wast_time_attr[2];
 
 	// set scheduling params
 	struct sched_param clock_generator_param;
 	struct sched_param clock_consumer_param;
 	struct sched_param cpu_wast_time_param[2];
 
-	// get main thread priority
-	struct sched_param main_thread_param;
-	CHECK_SUCCESS(pthread_getschedparam(pthread_self(),NULL,&main_thread_param));
-	int main_prio = main_thread_param.sched_curpriority;
-	// printf("Main thread priority: %d\n",main_prio);
-	// set priorities accordingly
-	clock_generator_param.sched_priority = main_prio+2;
-	clock_consumer_param.sched_priority = main_prio+1;
-	cpu_wast_time_param[0].sched_priority = main_prio;
-	cpu_wast_time_param[1].sched_priority = main_prio;
+	// set main prio [if set to high kernel trace fails due to timed out qconn response. Can be avoided by high N so qconn will be allowd to run some time]
+	int main_prio = 10;
+	CHECK_SUCCESS(pthread_setschedprio(pthread_self(),main_prio));
+	// Set priorities accordingly
+	clock_generator_param.sched_priority = main_prio-1;
+	clock_consumer_param.sched_priority = main_prio-2;
+	cpu_wast_time_param[0].sched_priority = main_prio-3;
+	cpu_wast_time_param[1].sched_priority = main_prio-3;
 
-
-
-	// define thread attributes
-	pthread_attr_t clock_generator_attr;
-	pthread_attr_t clock_consumer_attr;
-	pthread_attr_t cpu_wast_time_attr[2];
-
+	// init thread attributes
 	CHECK_SUCCESS(pthread_attr_init(&clock_generator_attr));
 	CHECK_SUCCESS(pthread_attr_init(&clock_consumer_attr));
 	CHECK_SUCCESS(pthread_attr_init(&cpu_wast_time_attr[0]));
@@ -141,20 +142,18 @@ int task6_main() {
 	CHECK_SUCCESS(pthread_attr_setschedparam(&cpu_wast_time_attr[0],&cpu_wast_time_param[0]));
 	CHECK_SUCCESS(pthread_attr_setschedparam(&cpu_wast_time_attr[1],&cpu_wast_time_param[1]));
 
-	// create threads and semaphores
-	sem_t clock_sem;
-	sem_t waste_cpu_time_sems[2];
-
+	// init semaphores
 	CHECK_SUCCESS(sem_init(&clock_sem,0,0));
 	CHECK_SUCCESS(sem_init(&waste_cpu_time_sems[0],0,0));
 	CHECK_SUCCESS(sem_init(&waste_cpu_time_sems[1],0,0));
 
 	clock_consumer_args_t clock_consumer_args = {.clock_sem = &clock_sem, .waste_cpu_time_sems = waste_cpu_time_sems};
 
-	CHECK_SUCCESS(pthread_create(&clock_generator, &clock_generator_attr,clock_generator_thread,&clock_sem));
+	// create threads
 	CHECK_SUCCESS(pthread_create(&clock_consumer, &clock_consumer_attr,clock_consumer_thread,&clock_consumer_args));
 	CHECK_SUCCESS(pthread_create(&cpu_wast_time[0], &cpu_wast_time_attr[0],waste_cpu_time_thread,&waste_cpu_time_sems[0]));
 	CHECK_SUCCESS(pthread_create(&cpu_wast_time[1], &cpu_wast_time_attr[1],waste_cpu_time_thread,&waste_cpu_time_sems[1]));
+	CHECK_SUCCESS(pthread_create(&clock_generator, &clock_generator_attr,clock_generator_thread,&clock_sem));
 
 	// let run for 2 s
 	sleep(2);
@@ -169,6 +168,11 @@ int task6_main() {
 	CHECK_SUCCESS(pthread_join(clock_consumer,NULL));
 	CHECK_SUCCESS(pthread_join(cpu_wast_time[0],NULL));
 	CHECK_SUCCESS(pthread_join(cpu_wast_time[1],NULL));
+
+	// destroy semaphores
+	CHECK_SUCCESS(sem_destroy(&clock_sem));
+	CHECK_SUCCESS(sem_destroy(&waste_cpu_time_sems[0]));
+	CHECK_SUCCESS(sem_destroy(&waste_cpu_time_sems[1]));
 
 	// get watermarks
 	stack_size_clock_generator = get_stack_watermark(ptr_stack_clock_generator, init_stack_size);
